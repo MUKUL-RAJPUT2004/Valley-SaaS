@@ -28,12 +28,12 @@ export async function POST(request: NextRequest){
     try {
     
         const { userId } = await auth();
-        //check if user i sign in or not, although its additioal as we have middleware already setup to protect
+        //check if user is sign in or not, although its additional as we have middleware already setup to protect
         if(!userId){
             return NextResponse.json({error: "Unauthorised"}, {status: 401})
         }
 
-        //importnt check
+        //important check
         if(
             !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET
         ){

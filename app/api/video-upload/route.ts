@@ -1,3 +1,9 @@
+export const runtime = "nodejs";
+import { Readable } from "stream";
+
+
+
+
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary, UploadStream } from 'cloudinary';
 import { auth } from '@clerk/nextjs/server';
@@ -52,28 +58,38 @@ export async function POST(request: NextRequest){
         }
 
         const bytes = await file.arrayBuffer(); //remeber its same 
-        const buffer = Buffer.from(bytes);
+        // const buffer = Buffer.from(bytes);
 
-        const result = await new Promise<cloudinaryUploadResult>(
-            (resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    {
-                        resource_type: "video",
-                        folder: "video-uploads",
-                        transformation: [   //to save our space and bandwidth
-                            { quality: "auto" },
-                            { fetch_format: "mp4" }
-                        ]
-                    },
-                    (error, result) => {
-                        if(error) reject(error);
-                        else resolve(result as cloudinaryUploadResult);
 
-                    }
-                )
-                uploadStream.end(buffer);
+        // Convert to readable stream for Cloudinary
+        const readable = Readable.from(Buffer.from(bytes));
+
+        const result = await new Promise<cloudinaryUploadResult>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+            resource_type: "video",
+            folder: "video-uploads",
+            chunk_size: 6_000_000, // upload in 6MB chunks
+            timeout: 600000, // allow up to 10 minutes
+            transformation: [
+                { quality: "auto" },
+                { fetch_format: "mp4" }
+            ]
+            },
+            (error, result) => {
+            if (error) {
+                console.error("CLOUDINARY UPLOAD ERROR:", error);
+                reject(error);
+            } else {
+                console.log("UPLOAD SUCCESS:", result);
+                resolve(result as cloudinaryUploadResult);
             }
-        )
+            }
+        );
+
+        readable.pipe(uploadStream); // <---- this is the main fix
+        });
+
         const video = await prisma.video.create({   //save data to prisma
             data: {
                 title,

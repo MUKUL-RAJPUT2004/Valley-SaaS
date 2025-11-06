@@ -11,7 +11,7 @@ function VideoUpload() {
   const router = useRouter();
 
   //max file size 670MB
-  const MAX_FILE_SIZE = 70 * 1024 * 1024;
+  const MAX_FILE_SIZE = 200 * 1024 * 1024;
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -23,7 +23,7 @@ function VideoUpload() {
     if(file.size > MAX_FILE_SIZE){
       //add notification
 
-      alert("File size exceeds the maximum limit of 70MB");
+      alert("File size exceeds the maximum limit of 200MB");
       return;
     }
 

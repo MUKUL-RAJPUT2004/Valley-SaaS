@@ -198,15 +198,48 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="relative py-16 px-6 border-y border-white/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-gray-400 text-sm uppercase tracking-wider mb-4">Trusted by industry leaders</p>
-            <div className="flex flex-wrap justify-center items-center gap-12 opacity-40">
-              {['YouTube', 'Instagram', 'TikTok', 'Vimeo', 'Behance', 'Dribbble'].map((brand, idx) => (
-                <div key={idx} className="text-2xl font-bold text-white">{brand}</div>
-              ))}
-            </div>
+      <section className="relative py-16 px-6 border-y border-white/10" id="waitlist">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-sm text-gray-400 uppercase tracking-wider mb-4">Get early access</p>
+          <h3 className="text-2xl md:text-3xl font-bold mb-4">
+            Join the waitlist for exclusive early access and product updates
+          </h3>
+          <p className="text-gray-400 mb-8 max-w-xl mx-auto">
+            Sign up to be the first to try new features, receive beta invites, and get priority support.
+          </p>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const form = e.target as HTMLFormElement;
+              const input = form.elements.namedItem('email') as HTMLInputElement;
+              if (!input?.value) {
+                alert('Please enter a valid email');
+                return;
+              }
+              // placeholder behavior — integrate with /api/waitlist or external service
+              alert(`Thanks! We'll notify ${input.value} when early access opens.`);
+              form.reset();
+            }}
+            className="flex items-center justify-center gap-3"
+          >
+            <input
+              name="email"
+              type="email"
+              placeholder="you@company.com"
+              className="w-72 sm:w-96 px-4 py-3 rounded-full bg-black/30 border border-white/10 text-white placeholder-gray-400 focus:outline-none"
+              required
+            />
+            <button
+              type="submit"
+              className="px-5 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 font-semibold hover:scale-105 transition-transform"
+            >
+              Request Access
+            </button>
+          </form>
+
+          <div className="mt-8 text-xs text-gray-500">
+            We respect your privacy — your email will only be used for product updates.
           </div>
         </div>
       </section>

@@ -39,7 +39,7 @@ function VideoUpload() {
       //check for 200 response
       if(response.status === 200){
         //redirect to home page or video page
-        router.push('/videos-upload');
+        router.push('/');
       }
       
     } catch (error) {

@@ -14,21 +14,24 @@ function Home() {
 
   const fetchVideos = useCallback(async () => {
     try {
-      const response = await axios.get('/api/videos') //verify from frontend
-      if(!Array.isArray(response.data)){
-        setVideos(response.data)
+      const response = await axios.get('/api/videos');
+      console.log('GET /api/videos ->', response.data); // inspect payload
+
+      // If your API returns { videos: [...] } adjust accordingly:
+      const payload = response.data?.videos ?? response.data;
+
+      if (Array.isArray(payload)) {
+        setVideos(payload);
+      } else {
+        throw new Error("Unexpected response format");
       }
-      else{
-        throw new Error(" Unexpected response format")
-      }
-    } catch (error) {
-      console.log(error);
-      setError("Failed to fetch videos")
-      
-    }finally{
-      setLoading(false)
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch videos");
+    } finally {
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     fetchVideos()

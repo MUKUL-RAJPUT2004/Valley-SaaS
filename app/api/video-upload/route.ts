@@ -1,5 +1,6 @@
 export const runtime = "nodejs";
 import { Readable } from "stream";
+import prisma from '@/lib/prisma';
 
 
 
@@ -8,10 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary, UploadStream } from 'cloudinary';
 import { auth } from '@clerk/nextjs/server';
 import error from 'next/error';
-import { PrismaClient } from '@prisma/client';
 
-//global initialisation of prisma
-const prisma = new PrismaClient()
 
 
 // Configuration
@@ -87,7 +85,7 @@ export async function POST(request: NextRequest){
             }
         );
 
-        readable.pipe(uploadStream); // <---- this is the main fix
+        readable.pipe(uploadStream);
         });
 
         const video = await prisma.video.create({   //save data to prisma
@@ -101,14 +99,12 @@ export async function POST(request: NextRequest){
 
             }
         })
-        return NextResponse.json(video)
-
+        return NextResponse.json(video, { status: 200 });
+    
     } catch (error) {
         console.log("Upload video failed", error);
 
         return NextResponse.json({error: "Upload video failed"}, {status: 500});
-    } finally{
-        await prisma.$disconnect();
-    }
+    } 
 
 }
